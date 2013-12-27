@@ -18,15 +18,15 @@ void setup()
   pinMode(LED, OUTPUT);
   pinMode(POT, INPUT); // There is no other mode for pins A0-A5, so no config needed
   
-  digitalWrite(LED, LOW).
+  digitalWrite(LED, LOW);
   // Software serial HC-05 setup (Easier for frecuent flashes and debug ;))
-  BTSerial.begin(9600);
-  BTSerial.flush();
+//  BTSerial.begin(57600);
+//  BTSerial.flush();
   delay(500);
   
   // Regular Serial is for debug 
-  Serial.begin(9600);
-  Serial.println("Setup Done. Go on!");
+  Serial.begin(57600);
+  //Serial.println("Setup Done. Go on!");
 }
 
 void loop()
