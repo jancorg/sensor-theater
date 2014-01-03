@@ -4,7 +4,7 @@
 #define TX 2
 
 #define LED 13
-#define POT 0
+#define POT A0
 
 #include <MeetAndroid.h>
 
@@ -25,7 +25,7 @@ void setup()
   delay(500);
   
   // Regular Serial is for debug 
-  Serial.begin(57600);
+  Serial.begin(115200);
   //Serial.println("Setup Done. Go on!");
 }
 
@@ -46,5 +46,5 @@ void loop()
   meetAndroid.receive();
   meetAndroid.send(pot_status);
 
-  delay(100);
+  delay(1000);
 }

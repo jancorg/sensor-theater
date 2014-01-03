@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.view.Menu;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
 
 
 import com.jjoe64.graphview.*;
@@ -21,15 +23,16 @@ import at.abraxas.amarino.Amarino;
 import at.abraxas.amarino.AmarinoIntent;
 
 
+#TODO: Replace Amarino libs
+
 public class MainActivity extends Activity {
 
-	private final Handler mHandler = new Handler();
 	
-	private static final String DEVICE_ADDRESS =  "98:D3:31:20:11:7B";
-	private double time_X = 0.0;
+	private static final String DEVICE_ADDRESS =  "DE:AD:BE:EF:CA:FE";
+	private double time_X = 0;
 
 	private GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
-    	      new GraphViewData(0.0, 0)
+    	      new GraphViewData(0, 0)
     	     
     	      
     	});	
@@ -51,20 +54,17 @@ public class MainActivity extends Activity {
 			final int dataType = intent.getIntExtra(AmarinoIntent.EXTRA_DATA_TYPE, -1);
 			double sensor_data = 0;
 			
-			// we only expect String data though, but it is better to check if really string was sent
-			// later Amarino will support differnt data types, so far data comes always as string and
-			// you have to parse the data to the type you have sent from Arduino, like it is shown below
 			if (dataType == AmarinoIntent.STRING_EXTRA){
 				data = intent.getStringExtra(AmarinoIntent.EXTRA_DATA);
-				time_X += 0.1;
+				time_X += 1;
 				if (data != null){
-	/*				try {
-						// since we know that our string value is an int number we can parse it to an integer
-	*/					sensor_data = Double.parseDouble(data);
-	/*					
+				try {
+					sensor_data = Integer.parseInteger(data);
 					}
-					catch (NumberFormatException e) { }
-    */				exampleSeries.appendData( new GraphViewData(time_X, sensor_data), true, 10);
+				catch (NumberFormatException e) { }
+				exampleSeries.appendData( new GraphViewData(time_X, sensor_data), true, 10);
+    				TextView debug=(TextView)findViewById(R.id.textView1);
+    				debug.setText(data);
 				}
 			}
 		}
@@ -88,14 +88,10 @@ public class MainActivity extends Activity {
 		
 		LinearLayout layout = (LinearLayout) findViewById(R.id.graph1);
 		layout.addView(graphView);
-		
-		
-		
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
@@ -103,23 +99,15 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		// in order to receive broadcasted intents we need to register our receiver
 		registerReceiver(arduinoReceiver, new IntentFilter(AmarinoIntent.ACTION_RECEIVED));
-		
-		// this is how you tell Amarino to connect to a specific BT device from within your own code
 		Amarino.connect(this, DEVICE_ADDRESS);
 		
 	}
 
-
 	@Override
 	protected void onStop() {
 		super.onStop();
-		
-		// if you connect in onStart() you must not forget to disconnect when your app is closed
 		Amarino.disconnect(this, DEVICE_ADDRESS);
-		
-		// do never forget to unregister a registered receiver
 		unregisterReceiver(arduinoReceiver);
 	}
 	
